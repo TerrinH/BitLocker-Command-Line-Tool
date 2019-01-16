@@ -1,4 +1,4 @@
-# bitlocker-tool
+# deployment-bitlocker-tool
 A command-line tool for enabling BitLocker and storing the generated keys based on date and machine serial number.
 
 This is pretty self explainatory I feel, so here's some history instead:
