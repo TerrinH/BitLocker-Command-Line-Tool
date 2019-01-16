@@ -1,6 +1,7 @@
 @ECHO OFF
 ::Made by Terrin Hamilton 7/20/17
-TITLE BitLocker Tool v1.9
+::Under GPL v3 License
+TITLE BitLocker Tool v2.0
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 ::#########################################################################################
@@ -81,6 +82,9 @@ PAUSE
 GOTO START
 ::#########################################################################################
 
+::#########################################################################################
+::############## BitLocker Save Error Message #############################################
+::#########################################################################################
 :SaveError
 COLOR 0C
 CLS
@@ -89,7 +93,11 @@ ECHO.
 ECHO You may have to use option 4 to display BitLocker information and record it manually.
 PAUSE
 GOTO START
+::#########################################################################################
 
+::#########################################################################################
+::############## Dynamically Generate Encryption Options Menu #############################
+::#########################################################################################
 :EnableBL
 CLS
 ECHO Detected valid encryption methods for this machine:
@@ -122,7 +130,11 @@ SET /A "DataValidation=%EncryptSelection%"
 IF /I "%DataValidation%" EQU "0" (GOTO ERROR)
 IF /I "%EncryptSelection%" GTR "%EncryptCount%" (GOTO ERROR)
 IF /I "%EncryptSelection%" LSS "0" (GOTO ERROR)
+::############### Fall-Through To: ########################################################
 
+::#########################################################################################
+::############## Dynamically Generate Customer Directory Menu #############################
+::############## And Enable BitLocker if All Goes Well ####################################
 :CustomerEnable
 SET /A "CustomerCount=0"
 CLS
@@ -131,7 +143,7 @@ FOR /D %%B IN ("%Customer_Path%*.*") DO (
 	SET /A "CustomerCount+=1"
 	SET "DirPath=%%B"
 	SET "CustomerName=!DirPath:~13!"
-	REM I'm honestly surprised that adding all these exclamation points worked...
+	::I'm honestly surprised that adding all these exclamation points worked...
 	SET "Output=!!CustomerCount!!Spacer!!CustomerName!!"
 	SET "Customer[!CustomerCount!]DirToday=!DirPath!\BitLocker\Script Captures\!DirName!"
 	ECHO !Output!
@@ -162,7 +174,11 @@ FOR /L %%A IN (%EncryptSelection%, 1, %LoopTempVar%) DO (
 :ExitEnableLoop
 SHUTDOWN -R -T 2
 EXIT /B
+::#########################################################################################
 
+::#########################################################################################
+::############## Create A New Customer Directory To Save BitLocker Keys To ################
+::#########################################################################################
 :NewCustomer
 CLS
 ECHO Please enter the full name of the new customer directory to be created:
@@ -182,16 +198,20 @@ IF EXIST "%Customer_Path%%NewCustomerName%" (
 	PAUSE
 	GOTO START
 )
+::#########################################################################################
 
+::#########################################################################################
+::############## Disable BitLocker Encryption and Delete Saved Keys #######################
+::#########################################################################################
 :DisableBL
 SET /A "CustomerCount=0"
 CLS
-::Gather all the customer names within the "Customers" directory and add their directories as options for saving BitLocker information to.
+::Gather all the customer names within the "Customers" directory and add their directories as options for removing BitLocker information from.
 FOR /D %%A IN ("%Customer_Path%*.*") DO (
 	SET /A "CustomerCount+=1"
 	SET "DirPath=%%A"
 	SET "CustomerName=!DirPath:~13!"
-	REM I'm honestly surprised that adding all these exclamation points worked...
+	::I'm honestly surprised that adding all these exclamation points worked...
 	SET "Output=!!CustomerCount!!Spacer!!CustomerName!!"
 	SET "Customer[!CustomerCount!]Dir=!DirPath!\BitLocker\Script Captures"
 	ECHO !Output!
@@ -226,14 +246,22 @@ FOR /L %%A IN (%Selection%, 1, %LoopTempVar%) DO (
 ECHO.
 PAUSE
 GOTO START
+::#########################################################################################
 
+::#########################################################################################
+::############## Show BitLocker (De)Encryption Progress with a Loop #######################
+::#########################################################################################
 :ShowProg
 CLS
 FOR /F "TOKENS=1 DELIMS=" %%A IN ('MANAGE-BDE -STATUS ^| FINDSTR /I "Volume Conversion Percentage Encryption"') DO (ECHO %%A)
 ECHO.
 TIMEOUT /T 10 /NOBREAK
 GOTO ShowProg
+::#########################################################################################
 
+::#########################################################################################
+::############## Fetch and Display Current BitLocker Status of Local Machine ##############
+::#########################################################################################
 :ShowBL
 CLS
 MANAGE-BDE -PROTECTORS -GET C:
@@ -243,7 +271,11 @@ SET /P "Input="
 IF /I "%Input%" EQU "Y" GOTO SAVE
 IF /I "%Input%" EQU "N" GOTO START
 GOTO ERROR
+::############## Fall-Through To: #########################################################
 
+::#########################################################################################
+::############## Fetch and Save BitLocker Keys of Local Machine ###########################
+::#########################################################################################
 :SAVE
 SET /A "CustomerCount=0"
 CLS
@@ -252,7 +284,7 @@ FOR /D %%A IN ("%Customer_Path%*.*") DO (
 	SET /A "CustomerCount+=1"
 	SET "DirPath=%%A"
 	SET "CustomerName=!DirPath:~13!"
-	REM I'm honestly surprised that adding all these exclamation points worked...
+	::I'm honestly surprised that adding all these exclamation points worked...
 	SET "Output=!!CustomerCount!!Spacer!!CustomerName!!"
 	SET "Customer[!CustomerCount!]DirToday=!DirPath!\BitLocker\Script Captures\!DirName!"
 	ECHO !Output!
@@ -282,6 +314,7 @@ FOR /L %%A IN (%Selection%, 1, %LoopTempVar%) DO (
 :ExitSaveLoop
 PAUSE
 GOTO START
+::#########################################################################################
 
 :EOF
 ENDLOCAL
