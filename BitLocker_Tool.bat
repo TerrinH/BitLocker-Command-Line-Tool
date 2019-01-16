@@ -39,7 +39,7 @@ IF "%ERRORLEVEL%" NEQ "0" (
 ::#########################################################################################
 
 ::#########################################################################################
-::############## Main Program Menu ##################################################
+::############## Main Program Menu ########################################################
 ::#########################################################################################
 :START
 ::Initialize global variables.
@@ -190,7 +190,7 @@ IF EXIST "%Customer_Path%%NewCustomerName%" (
 	ECHO Confirmed %Customer_Path%%NewCustomerName%
 	ECHO.
 	PAUSE
-	GOTO CustomerEnable
+	GOTO START
 ) ELSE (
 	COLOR 0C
 	ECHO Unable to create %Customer_Path%%NewCustomerName%
@@ -271,7 +271,7 @@ SET /P "Input="
 IF /I "%Input%" EQU "Y" GOTO SAVE
 IF /I "%Input%" EQU "N" GOTO START
 GOTO ERROR
-::############## Fall-Through To: #########################################################
+::#########################################################################################
 
 ::#########################################################################################
 ::############## Fetch and Save BitLocker Keys of Local Machine ###########################
@@ -280,15 +280,17 @@ GOTO ERROR
 SET /A "CustomerCount=0"
 CLS
 ::Gather all the customer names within the "Customers" directory and add their directories as options for saving BitLocker information to.
-FOR /D %%A IN ("%Customer_Path%*.*") DO (
+FOR /D %%B IN ("%Customer_Path%*.*") DO (
 	SET /A "CustomerCount+=1"
-	SET "DirPath=%%A"
+	SET "DirPath=%%B"
 	SET "CustomerName=!DirPath:~13!"
 	::I'm honestly surprised that adding all these exclamation points worked...
 	SET "Output=!!CustomerCount!!Spacer!!CustomerName!!"
 	SET "Customer[!CustomerCount!]DirToday=!DirPath!\BitLocker\Script Captures\!DirName!"
 	ECHO !Output!
 )
+SET /A "CustomerCount+=1"
+ECHO !CustomerCount!.) Create new customer directory
 ECHO.
 ECHO Select a customer directory to save the BitLocker information to: {1/2/3}
 SET /P "Selection="
@@ -297,6 +299,7 @@ SET /A "DataValidation=%Selection%"
 IF /I "%DataValidation%" EQU "0" (GOTO ERROR)
 IF /I "%Selection%" GTR "%CustomerCount%" (GOTO ERROR)
 IF /I "%Selection%" LSS "0" (GOTO ERROR)
+IF /I "%Selection%" EQU "%CustomerCount%" (GOTO NewCustomer)
 ::Created the temporary variable below as a fail-safe to be sure the loop doesn't attempt to become infinite.
 SET "LoopTempVar=%Selection%+1"
 CLS
