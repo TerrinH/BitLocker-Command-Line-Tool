@@ -1,7 +1,7 @@
 @ECHO OFF
 ::Made by Terrin Hamilton 7/20/17
 ::Under GPL v3 License
-TITLE BitLocker Tool v2.0
+TITLE BitLocker Tool v2.1
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 ::#########################################################################################
