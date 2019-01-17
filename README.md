@@ -13,7 +13,7 @@ Features:
 
 - Automatic Administrative Privillages:
   Automatically runs and requests administrative privillages if the tool doesn't already have them. This is done with a VBS code snippet 
-  I obtained from somehwere on the internet (sorry anonymous contributor).
+  I obtained from somewhere on the internet (sorry anonymous contributor).
 
 - Enable BitLocker:
   This allows the user to select from a list of valid encryption options based on the Windows OS it is run on. The list is dynamically 
