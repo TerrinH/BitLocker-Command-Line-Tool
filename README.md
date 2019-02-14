@@ -1,6 +1,4 @@
-# public-bitlocker-tool
-A public version of my production-level BitLocker Tool, modified in ways that make it less specific to one environment.
-
+# dynamic-bitlocker-tool
 How it Works:
 
 The tool was designed to be run from a flash drive so that the user may modify a BitLocker encryption state of a multitue of Windows OS
