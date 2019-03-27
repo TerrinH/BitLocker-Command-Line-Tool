@@ -1,7 +1,7 @@
 @ECHO OFF
 ::Made by Terrin Hamilton 7/20/17
 ::Under GPL v3 License
-TITLE BitLocker Tool v2.1
+TITLE BitLocker Tool v2.2
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 ::#########################################################################################
@@ -12,14 +12,12 @@ CLS
 COLOR 0A
 
 ::Here I test for administrative privillages by reading the ERRORLEVEL result of the attempt.
-IF "%PROCESSOR_ARCHITECTURE%" EQU "amd64" (
-	"%SYSTEMROOT%\SysWOW64\cacls.exe" "%SYSTEMROOT%\SysWOW64\config\system" >NUL 2>&1
-) ELSE (
-	"%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system" >NUL 2>&1
-)
+ECHO "This is a temporary file used by the BitLocker tool for checking admin permissions, delete this file if you see it." > BL-AccessCheck.TXT
+COPY "BL-AccessCheck.TXT" "%SYSTEMROOT%" >NUL 2>&1
 
 IF "%ERRORLEVEL%" NEQ "0" (
     ECHO Requesting administrative privileges...
+	DEL "BL-AccessCheck.TXT"
     GOTO UACPrompt
 ) ELSE (GOTO GotAdmin)
 
@@ -34,6 +32,7 @@ IF "%ERRORLEVEL%" NEQ "0" (
     EXIT /B
 
 :GotAdmin
+	DEL "%SYSTEMROOT%\BL-AccessCheck.TXT" >NUL 2>&1
     PUSHD "%CD%"
     CD /D "%~dp0"
 ::#########################################################################################
